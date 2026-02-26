@@ -42,30 +42,30 @@ const productModel = mongoose.model("products", productSchema);
 //? userModel
 const userModel = mongoose.model("users", userSchema);
 
-// get
+// get product
 app.get("/", async (req, res) => {
   const products = await productModel.find();
   // res.json(products);
   res.render("index", { products });
 });
 
-//? get
+//? get user
 app.get("/user", async (req, res) => {
   const users = await userModel.find();
   res.render("index2", { users });
 })
 
-// add
+// add product
 app.get("/add", (req, res) => {
   res.render("add");
 });
 
-//? add
+//? add user
 app.get("/adduser", (req, res) => {
   res.render("add2");
 });
 
-// save
+// save product
 app.post("/save", async (req, res) => {
   const body = req.body;
   const result = await productModel.create(body);
@@ -73,7 +73,7 @@ app.post("/save", async (req, res) => {
   // res.json({ message: "Product created" });
 });
 
-//? save
+//? save user
 app.post("/saveuser", async (req, res) => {
   const body = req.body;
   const result = await userModel.create(body);
@@ -81,14 +81,14 @@ app.post("/saveuser", async (req, res) => {
   // res.json({ message: "Product created" });
 });
 
-// edit
+// edit product
 app.get("/:id/edit", async (req, res) => {
   const id = req.params.id;
   const product = await productModel.findOne({ _id: id });
   res.render("edit", { product });
 });
 
-//? edit
+//? edit user
 app.get("/:id/edituser", async (req, res) => {
   const id = req.params.id;
   const user = await userModel.findOne({ _id: id });
@@ -111,14 +111,14 @@ app.post("/:id/save-user", async (req, res) => {
   res.redirect("/user");
 });
 
-// delete
+// delete product
 app.get("/:id/delete", async (req, res) => {
   const id = req.params.id;
   await productModel.findByIdAndDelete(id);
   res.redirect("/");
 });
 
-//? delete
+//? delete user
 app.get("/:id/deleteuser", async (req, res) => {
   const id = req.params.id;
   await userModel.findByIdAndDelete(id);
