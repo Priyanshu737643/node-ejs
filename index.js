@@ -1,7 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
+// npm i express-ejs-layouts
+import expressLayouts from "express-ejs-layouts";
 const app = express();
+app.use(expressLayouts);
+app.set("layout", "layout");
 app.set("view engine", "ejs");
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -13,7 +18,7 @@ const dbConnect = async () => {
 // startServer
 const startServer = async () => {
   await dbConnect();
-  app.listen(8080, () => console.log("server running"));
+  app.listen(8080, () => console.log("Server started"));
 };
 
 // productSchema
@@ -39,31 +44,33 @@ app.get("/add", (req, res) => {
   res.render("add");
 });
 
-// post
+// save
 app.post("/save", async (req, res) => {
   const body = req.body;
   const result = await productModel.create(body);
   res.redirect("/");
-  // res.json({ message: "Product Created" });
+  // res.json({ message: "Product created" });
 });
 
-app.get("/:id/edit", async(req, res) => {
+// edit
+app.get("/:id/edit", async (req, res) => {
   const id = req.params.id;
   const product = await productModel.findOne({ _id: id });
   res.render("edit", { product });
-})
+});
 
-app.post("/:id/save-product", async(req, res) => {
+// save-product
+app.post("/:id/save-product", async (req, res) => {
   const id = req.params.id;
   const body = req.body;
   await productModel.findByIdAndUpdate(id, body);
   res.redirect("/");
-})
+});
 
-app.get("/:id/delete", async(req, res) => {
+app.get("/:id/delete", async (req, res) => {
   const id = req.params.id;
   await productModel.findByIdAndDelete(id);
   res.redirect("/");
-})
+});
 
 startServer();
