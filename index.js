@@ -29,8 +29,18 @@ const productSchema = mongoose.Schema({
   imageurl: { type: String, required: true },
 });
 
+//? userSchema
+const userSchema = mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  role: { type: String, required: true },
+});
+
 // productModel
 const productModel = mongoose.model("products", productSchema);
+
+//? userModel
+const userModel = mongoose.model("users", userSchema);
 
 // get
 app.get("/", async (req, res) => {
@@ -39,9 +49,20 @@ app.get("/", async (req, res) => {
   res.render("index", { products });
 });
 
+//? get
+app.get("/user", async (req, res) => {
+  const users = await userModel.find();
+  res.render("index2", { users });
+})
+
 // add
 app.get("/add", (req, res) => {
   res.render("add");
+});
+
+//? add
+app.get("/adduser", (req, res) => {
+  res.render("add2");
 });
 
 // save
@@ -52,11 +73,26 @@ app.post("/save", async (req, res) => {
   // res.json({ message: "Product created" });
 });
 
+//? save
+app.post("/saveuser", async (req, res) => {
+  const body = req.body;
+  const result = await userModel.create(body);
+  res.redirect("/user");
+  // res.json({ message: "Product created" });
+});
+
 // edit
 app.get("/:id/edit", async (req, res) => {
   const id = req.params.id;
   const product = await productModel.findOne({ _id: id });
   res.render("edit", { product });
+});
+
+//? edit
+app.get("/:id/edituser", async (req, res) => {
+  const id = req.params.id;
+  const user = await userModel.findOne({ _id: id });
+  res.render("edit2", { user });
 });
 
 // save-product
@@ -67,10 +103,26 @@ app.post("/:id/save-product", async (req, res) => {
   res.redirect("/");
 });
 
+//? save-user
+app.post("/:id/save-user", async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+  await userModel.findByIdAndUpdate(id, body);
+  res.redirect("/user");
+});
+
+// delete
 app.get("/:id/delete", async (req, res) => {
   const id = req.params.id;
   await productModel.findByIdAndDelete(id);
   res.redirect("/");
+});
+
+//? delete
+app.get("/:id/deleteuser", async (req, res) => {
+  const id = req.params.id;
+  await userModel.findByIdAndDelete(id);
+  res.redirect("/user");
 });
 
 startServer();
